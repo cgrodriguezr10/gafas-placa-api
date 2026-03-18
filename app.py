@@ -1,6 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
+import re
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -18,8 +20,17 @@ placas = {
     "YZA741": {"soat": "VIGENTE", "soat_vence": "2026-02-28", "rtm": "VIGENTE", "rtm_vence": "2026-01-05", "tipo": "Bus"},
 }
 
-@app.route('/consultar/<placa>')
-def consultar(placa):
+def extraer_placa(texto):
+    texto = texto.upper().replace(" ", "")
+    patron = re.search(r'[A-Z]{3}[0-9]{3}', texto)
+    if patron:
+        return patron.group()
+    patron_moto = re.search(r'[A-Z]{2}[0-9]{4}', texto)
+    if patron_moto:
+        return patron_moto.group()
+    return None
+
+def consultar_placa(placa):
     p = placa.upper().strip()
     if p in placas:
         datos = placas[p]
@@ -29,8 +40,25 @@ def consultar(placa):
             estado = "CRITICO"
         else:
             estado = "ALERTA"
-        return jsonify({"encontrado": True, "placa": p, "estado": estado, **datos})
-    return jsonify({"encontrado": False, "placa": p})
+        return {"encontrado": True, "placa": p, "estado": estado, **datos}
+    return {"encontrado": False, "placa": p}
+
+@app.route('/consultar/<placa>')
+def consultar(placa):
+    return jsonify(consultar_placa(placa))
+
+@app.route('/leer-imagen', methods=['POST'])
+def leer_imagen():
+    try:
+        datos = request.get_json()
+        texto = datos.get('texto', '')
+        placa = extraer_placa(texto)
+        if placa:
+            resultado = consultar_placa(placa)
+            return jsonify(resultado)
+        return jsonify({"encontrado": False, "placa": "", "error": "No se detecto placa"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/')
 def inicio():
