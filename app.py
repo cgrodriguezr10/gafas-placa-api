@@ -9,6 +9,7 @@ CORS(app)
 
 placas = {
     "ABC123": {"soat": "VIGENTE", "soat_vence": "2025-12-31", "rtm": "VIGENTE", "rtm_vence": "2025-06-15", "tipo": "Automovil"},
+    "DAF061": {"soat": "VIGENTE", "soat_vence": "2025-12-31", "rtm": "VIGENTE", "rtm_vence": "2026-02-15", "tipo": "Automovil"},
     "XYZ789": {"soat": "VENCIDO", "soat_vence": "2024-08-10", "rtm": "VIGENTE", "rtm_vence": "2025-09-20", "tipo": "Camioneta"},
     "DEF456": {"soat": "VIGENTE", "soat_vence": "2025-11-05", "rtm": "VENCIDO", "rtm_vence": "2024-12-01", "tipo": "Moto"},
     "GHI321": {"soat": "VENCIDO", "soat_vence": "2024-03-15", "rtm": "VENCIDO", "rtm_vence": "2024-01-10", "tipo": "Bus"},
